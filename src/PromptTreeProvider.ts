@@ -78,14 +78,11 @@ export class PromptTreeProvider implements vscode.TreeDataProvider<Prompt> {
         });
         if (!promptText) return;
 
-        // Retrieve the current list of prompts
         const prompts = this.context.globalState.get<Prompt[]>('gemini-prompts', []);
         
-        // Create the new prompt object
         const newPrompt: Prompt = { id: Date.now().toString(), label, prompt: promptText };
         prompts.push(newPrompt);
 
-        // Save the updated list back to global storage and refresh the view
         await this.context.globalState.update('gemini-prompts', prompts);
         this.refresh();
     }
@@ -121,5 +118,56 @@ export class PromptTreeProvider implements vscode.TreeDataProvider<Prompt> {
         
         await this.context.globalState.update('gemini-prompts', updatedPrompts);
         this.refresh();
+    }
+
+    /**
+     * Command to export prompts to a JSON file.
+     */
+    public async exportPrompts() {
+        const prompts = this.context.globalState.get<Prompt[]>('gemini-prompts', []);
+        if (prompts.length === 0) {
+            vscode.window.showInformationMessage('There are no prompts to export.');
+            return;
+        }
+
+        const saveUri = await vscode.window.showSaveDialog({
+            filters: { 'JSON Files': ['json'] },
+            defaultUri: vscode.Uri.file('gemini-prompts.json')
+        });
+
+        if (saveUri) {
+            const content = JSON.stringify(prompts, null, 2);
+            await vscode.workspace.fs.writeFile(saveUri, Buffer.from(content, 'utf8'));
+            vscode.window.showInformationMessage('Prompts exported successfully!');
+        }
+    }
+
+    /**
+     * Command to import prompts from a JSON file.
+     */
+    public async importPrompts() {
+        const openUri = await vscode.window.showOpenDialog({
+            filters: { 'JSON Files': ['json'] },
+            canSelectMany: false,
+            openLabel: 'Import'
+        });
+
+        if (openUri && openUri[0]) {
+            try {
+                const content = await vscode.workspace.fs.readFile(openUri[0]);
+                const importedPrompts = JSON.parse(content.toString());
+                
+                // Basic validation to ensure it's an array of prompts
+                if (Array.isArray(importedPrompts) && importedPrompts.every(p => p.id && p.label && p.prompt)) {
+                    await this.context.globalState.update('gemini-prompts', importedPrompts);
+                    this.refresh();
+                    vscode.window.showInformationMessage('Prompts imported successfully!');
+                } else {
+                    vscode.window.showErrorMessage('Invalid prompt file format.');
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error importing prompts: ${error}`);
+            }
+        }
     }
 }

@@ -14,15 +14,12 @@ export function activate(context: vscode.ExtensionContext) {
     const promptTreeProvider = new PromptTreeProvider(context);
     vscode.window.registerTreeDataProvider('gemini-prompt-library', promptTreeProvider);
 
-    // MODIFIED: This command now finds the active editor before creating the panel.
     context.subscriptions.push(vscode.commands.registerCommand('gemini-code-buddy.start', () => {
-        // First, ensure there is an active text editor
         const activeEditor = vscode.window.activeTextEditor;
         if (!activeEditor) {
             vscode.window.showErrorMessage("Please open a code file before starting Gemini Code Buddy.");
             return;
         }
-        // Then, pass that editor reference when creating the panel
         GeminiPanel.createOrShow(context.extensionUri, activeEditor);
     }));
 
@@ -39,9 +36,18 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(vscode.commands.registerCommand('gemini-code-buddy.deletePrompt', (prompt: Prompt) => {
         promptTreeProvider.deletePrompt(prompt);
     }));
+
+    // Register the new export command
+    context.subscriptions.push(vscode.commands.registerCommand('gemini-code-buddy.exportPrompts', () => {
+        promptTreeProvider.exportPrompts();
+    }));
+
+    // Register the new import command
+    context.subscriptions.push(vscode.commands.registerCommand('gemini-code-buddy.importPrompts', () => {
+        promptTreeProvider.importPrompts();
+    }));
     
     context.subscriptions.push(vscode.commands.registerCommand('gemini-code-buddy.runPrompt', (prompt: Prompt) => {
-        // Ensure there is an active editor before running a prompt from the sidebar
         const activeEditor = vscode.window.activeTextEditor;
         if (!activeEditor) {
             vscode.window.showErrorMessage("Please open a code file to run a prompt on.");

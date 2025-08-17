@@ -3,6 +3,11 @@
   "displayName": "Gemini Code Buddy",
   "description": "Your AI pair programmer powered by Gemini",
   "version": "0.0.1",
+  "publisher": "your-publisher-name",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/your-repo-name.git"
+  },
   "engines": {
     "vscode": "^1.91.0"
   },
@@ -38,6 +43,16 @@
         "command": "gemini-code-buddy.runPrompt",
         "title": "Run Prompt on Code",
         "icon": "$(play)"
+      },
+      {
+        "command": "gemini-code-buddy.exportPrompts",
+        "title": "Export Prompts",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "gemini-code-buddy.importPrompts",
+        "title": "Import Prompts",
+        "icon": "$(cloud-upload)"
       }
     ],
     "viewsContainers": {
@@ -61,6 +76,16 @@
       "view/title": [
         {
           "command": "gemini-code-buddy.addPrompt",
+          "when": "view == gemini-prompt-library",
+          "group": "navigation"
+        },
+        {
+          "command": "gemini-code-buddy.importPrompts",
+          "when": "view == gemini-prompt-library",
+          "group": "navigation"
+        },
+        {
+          "command": "gemini-code-buddy.exportPrompts",
           "when": "view == gemini-prompt-library",
           "group": "navigation"
         }
