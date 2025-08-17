@@ -1,0 +1,11 @@
+# Dependency directories
+out/
+dist/
+node_modules/
+.vscode-test/
+
+#build log
+npm-debug.log*
+
+#build distro
+*.vsix

@@ -1,0 +1,119 @@
+{
+  "name": "gemini-code-buddy",
+  "displayName": "Gemini Code Buddy",
+  "description": "Your AI pair programmer powered by Gemini",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.91.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "gemini-code-buddy.start",
+        "title": "Start Gemini Code Buddy"
+      },
+      {
+        "command": "gemini-code-buddy.addPrompt",
+        "title": "Add New Prompt",
+        "icon": "$(add)"
+      },
+      {
+        "command": "gemini-code-buddy.editPrompt",
+        "title": "Edit Prompt",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "gemini-code-buddy.deletePrompt",
+        "title": "Delete Prompt",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "gemini-code-buddy.runPrompt",
+        "title": "Run Prompt on Code",
+        "icon": "$(play)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gemini-code-buddy-sidebar",
+          "title": "Gemini Code Buddy",
+          "icon": "$(beaker)"
+        }
+      ]
+    },
+    "views": {
+      "gemini-code-buddy-sidebar": [
+        {
+          "id": "gemini-prompt-library",
+          "name": "Prompt Library"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "gemini-code-buddy.addPrompt",
+          "when": "view == gemini-prompt-library",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "gemini-code-buddy.runPrompt",
+          "when": "view == gemini-prompt-library",
+          "group": "inline"
+        },
+        {
+          "command": "gemini-code-buddy.editPrompt",
+          "when": "view == gemini-prompt-library",
+          "group": "inline"
+        },
+        {
+          "command": "gemini-code-buddy.deletePrompt",
+          "when": "view == gemini-prompt-library"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Gemini Code Buddy",
+      "properties": {
+        "gemini-code-buddy.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your Google AI Studio API key for Gemini.",
+          "secret": true
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.91.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@typescript-eslint/eslint-plugin": "^8.39.0",
+    "@typescript-eslint/parser": "^8.39.0",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.15.0"
+  }
+}
